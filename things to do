@@ -1,0 +1,22 @@
+# COMPLETED;
+# - good ending with ["bear_calmed"] flag
+# - save/load states work as intended + behave correctly
+# - added a "restart" and "quit" feature in game_loop() definition
+# - added a handle_death(self) definition for ["bear_attacked"] flag bad ending
+# - finally fixed bug where you could not leave to different location
+# 
+# TO DO:
+# - add clear screen function:
+#   - import os 
+#   - def clear_screen():
+#       - os.system('cls' if os.name == 'nt' else 'clear')
+# - add a typewriter effect to make it more interesting
+# import time
+#import sys
+# 
+#def type_print(text):
+#    for char in text:
+#        sys.stdout.write(char)
+#        sys.stdout.flush()
+#        time.sleep(0.03) # Adjust speed here
+#    print()
