@@ -29,7 +29,7 @@ locations = {
     "The Dark Cave": {
         "description": "A dark and damp cave. The drops of water echo throughout. Something within growls low.",
         "exits": ["The Dark Forest"],
-        "actions": ["investigate", "fight", "calm", "investigate cave", "leave", "eat herb"]
+        "actions": ["investigate", "fight", "calm", "investigate cave", "leave", "eat herb", "hug bear"]
     },
     "The Fountain of Youth": {
         "description": "A fountain glowing ethereal white. It's rich water begs you to take a sip.",
@@ -212,7 +212,7 @@ def calm_bear(self):
         self.flags["bear_calmed"] = True
         self.flags["bear_attacked"] = False
     else:
-        type_printprint("The bear is not aggressive yet. There is no need to calm it.")
+        type_print("The bear is not aggressive yet. There is no need to calm it.")
 
 
 # choices player can choose and what they do.
@@ -298,6 +298,9 @@ def interact(self, cmd):
             type_print("You pull down your trousers and begin to relieve yourself in the fountain,\nsighing with relief, before you hear an angry bishop stab you through the heart,\nand you die, bleeding into the crystallized waters.")
             type_print("YOU HAVE PEED AND DIED. GREAT JOB, DUMBASS.")
             handle_death(self)
+    if cmd == "hug bear":
+        if self.location == "The Dark Cave" and self.flags.get("bear_calmed"):
+            type_print("You give the bear a big, warm hug. He seems to appreciate your willingness to touch him without harming him and makes a loud huff of satisfaction")
 
 if __name__ == "__main__":
     game_loop()
