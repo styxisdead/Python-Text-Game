@@ -1,3 +1,16 @@
+import os
+import time
+import sys
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def type_print(text):
+    for char in text:
+        print(char, end='', flush=True)
+        time.sleep(0.02) # Adjust speed here
+    print()
+
 # list of locations, actions, exits, and description.
 # will update into a dictionary soon once mini text-game is fully fleshed out and complete as to make transition less mentally distressing.
 locations = {
@@ -37,12 +50,14 @@ class GameState:
             "peed_in_fountain": False,
             "found_herb": False,
             "gained_immortality": False,
-            "eaten_herb": False
+            "eaten_herb": False,
+            "immortal": False
         }
+
 
 def game_loop():
     self = GameState()
-    print("Welcome to your adventure!\nType 'save' to save, 'load' to load your previous game, 'restart' to start from the beginning again, 'quit' to exit the game, or type an action on screen to start!")
+    type_print("Welcome to your adventure!\nType 'save' to save, 'load' to load your previous game,\n'restart' to start from the beginning again,\n 'quit' to exit the game, or type an action on screen to start!") 
 
     while True:
         show_location(self)
@@ -171,33 +186,33 @@ def process_cmd(self, cmd):
 # will add a sword to game for this scenario.
 def fight_bear(self):
     if self.flags["bear_calmed"]:
-        print("The beast stares at you with a soft gaze. He does not intend to hurt you.")
+        type_print("The beast stares at you with a soft gaze. He does not intend to hurt you.")
         return
 
     if not self.flags["bear_attacked"]:
-        print("The beast slashes you, dealing -5 damage!")
+        type_print("The beast slashes you, dealing -5 damage!")
         self.health -= 5
         self.flags["bear_attacked"] = True
     else:
-        print("The beast slashes you once again, dealing -10 damage!")
+        type_print("The beast slashes you once again, dealing -10 damage!")
         self.health -= 10
     if self.health <= 0:
         print("The beast has defeated you...")
-        exit()
+        handle_death(self)
     else:
         print(f"Your health is now {self.health}")
 
 # this is a WIP and very barebones. there will be a randomizer that will make the flag True or False.
 def calm_bear(self):
     if self.flags.get("bear_calmed"):
-        print("The beast is already calm.")
+        type_print("The beast is already calm.")
         return
     elif self.flags.get("bear_attacked"):
-        print("You coo and show yourself to not be a threat. The beast sits and stares at you with soft eyes.")
+        type_print("You coo and show yourself to not be a threat. The beast sits and stares at you with soft eyes.")
         self.flags["bear_calmed"] = True
         self.flags["bear_attacked"] = False
     else:
-        print("The bear is not aggressive yet. There is no need to calm it.")
+        type_printprint("The bear is not aggressive yet. There is no need to calm it.")
 
 
 # choices player can choose and what they do.
@@ -205,10 +220,10 @@ def calm_bear(self):
 def interact(self, cmd):
     if cmd == "talk":
         if self.location == "The Village of Pithon":
-            print("You speak to the village elder. He warns you of dangers in the forest and begs you not to investigate the sounds.")
+            type_print("You speak to the village elder. He warns you of dangers in the forest and begs you not to investigate the sounds.")
             self.flags["talked_to_elder"] = True
         elif self.flags["talked_to_elder"] == True:
-            print("There is nobody here to speak to...")
+            type_print("There is nobody here to speak to...")
         else:
             print("Invalid command.")
 
@@ -220,51 +235,69 @@ def interact(self, cmd):
 
     if cmd == "leave":
         if self.location == "The Village of Pithon":
-            print("Your curiosity overtakes you and you step outside the village's safe walls and into the darkness before you...")
+            type_print("Your curiosity overtakes you and you step outside the village's safe walls and into the darkness before you...")
             self.location = "The Dark Forest"
         elif self.location == "The Dark Cave":
-            print("You leave the dark cave and find yourself oddly satisfied with your small adventure. You return to the village elder and tell him of your encounter with a bear, which is then passed down for generations.")
-            print("THE END.")
-            choice = input("\n Would you like to play again? (y/n): ")
-            if choice == "y":
-                self .__init__()
-                print("\n" + "="*20)
-                print("RESTARTING ADVENTURE...")
-                print("="*20 + "\n")
-            else:
-                print("Thanks for playing!")
-                exit()
+                type_print("You leave the dark cave and find yourself oddly satisfied with your small adventure. You return to the village elder\nand tell him of your encounter with a bear, which is\nthen passed down for generations to come.")
+                type_print("THE END.")
+                choice = input("\n Would you like to play again? (y/n): ")
+                if choice == "y":
+                    self .__init__()
+                    print("\n" + "="*20)
+                    print("RESTARTING ADVENTURE...")
+                    print("="*20 + "\n")
+                else:
+                    print("Thanks for playing!")
+                    exit()
 
     if cmd == "call":
         if self.location == "The Dark Forest":
-            print("Your words bounce off the once bright bark of the alders and into the wild. Nothing returns your call except your own echo...")
+            type_print("Your words bounce off the once bright\nbark of the alders and into the wild.\nNothing returns your call except your own echo...")
         else:
             print("You cannot do that here.")
 
     if cmd == "investigate cave":
         if self.location == "The Dark Forest":
-            print("You wander inside the dark a mouldy cave, cautious of the dangers that await you...")
+            type_print("You wander inside the dark a mouldy cave, cautious of the dangers that await you...")
             self.location = "The Dark Cave"
         elif self.location == "The Dark Cave" and not self.flags["bear_calmed"]:
-            print("A large and terrifying Grizzly Bear springs out from the darkness and attacks you!")
+            type_print("A large and terrifying Grizzly Bear springs out from the darkness and attacks you!")
             self.flags["bear_attacked"] = True
 
     if cmd == "go to fountain":
         if self.location == "The Village of Pithon":
-            print("You make your way to the fountain in the village square.")
+            type_print("You make your way to the fountain in the village square.")
             self.location = "The Fountain of Youth"
 
     if cmd == "investigate":
         if self.location == "The Dark Forest":
-            print("You search the ground and find a healing herb in the shrubs.")
+            type_print("You search the ground and find a healing herb in the shrubs.")
             self.inventory.append("healing herb")
             self.flags["found_herb"] = True
         elif self.location == "The Dark Cave" and not self.flags["bear_calmed"]:
-            print("Growls low and threatening ring through the cave. Be cautious.")
+            type_print("Growls low and threatening ring through the cave. Be cautious.")
         elif self.location == "The Village of Pithon":
-            print("The forest noises draw you closer, almost beckoning you to step inside...")
+            type_print("The forest noises draw you closer, almost beckoning you to step inside...")
         else:
             print("You may not perform that action right now.")
+
+    if cmd == "examine":
+        if self.location == "The Fountain of Youth":
+            type_print("You look carefully into the crystal blue waters, watching the light\nrefract off of its clear surface. You wonder how something so pure might taste...")
+        else:
+            print("You cannot do that here.")
+
+    if cmd == "sip":
+        if self.location == "The Fountain of Youth":
+            type_print("You sip the clear water and gain immortality!\nThe shifting magic courses through your veins with such vitality.")
+            type_print("You gained the immortal trait. Now the bear cannot damage you.")
+            self.flags["immortal"] = True
+
+    if cmd == "pee in":
+        if self.location == "The Fountain of Youth":
+            type_print("You pull down your trousers and begin to relieve yourself in the fountain,\nsighing with relief, before you hear an angry bishop stab you through the heart,\nand you die, bleeding into the crystallized waters.")
+            type_print("YOU HAVE PEED AND DIED. GREAT JOB, DUMBASS.")
+            handle_death(self)
 
 if __name__ == "__main__":
     game_loop()
